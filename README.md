@@ -25,8 +25,8 @@ Check out the demo of the project at https://video-generator-8fe43.web.app/
 
 1. Clone the repository
 2. Install dependencies with `npm install`
-3. Create a `.env` file and add your OpenAI API key as `OPENAI_API_KEY`
-4. Start the development server with `npm run dev`
+3. Set add your OpenAI API key at src/chat.tsx line 88
+4. Start the development server with `npm run start`
 
 ### Usage
 
