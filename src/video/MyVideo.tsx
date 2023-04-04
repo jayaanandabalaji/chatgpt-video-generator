@@ -12,17 +12,32 @@ import {TextAnimation} from './slideInAnimation';
 
 export const MyVideo: React.FC<{
 	blobUrl: string;
-	sentence: string;
-}> = ({ blobUrl,sentence }) =>{
+	sentence: any;
+	audioUrl: any;
+}> = ({ blobUrl,sentence,audioUrl }) =>{
+
+	let accumulatedDuration = 0;
+	const sequenceList = audioUrl.map((audio:any, i:number) => {
+	  const startFrom = 10 + parseInt((accumulatedDuration * 30).toString(), 10);
+	  const durationInFrames = Math.ceil(audio["duration"] * 30);
+	  accumulatedDuration += audio["duration"];
+	
+	  return (
+		<Sequence from={startFrom} durationInFrames={durationInFrames} key={audio["url"]}>
+		  <Audio src={audio["url"]} />
+		  <TextAnimation text={sentence[i]} />
+		</Sequence>
+	  );
+	});
+	
 	return (
 		<AbsoluteFill style={{backgroundColor: 'white'}}>
 			<AbsoluteFill >
 				
             <Video src={blobUrl} />
-				<Sequence  from={10} >
-				<Audio src={"http://localhost:3001/output.wav"}/>
-                <TextAnimation text={sentence}/>
-				</Sequence>
+
+			{sequenceList}
+				
 			</AbsoluteFill>
 		</AbsoluteFill>
 	);

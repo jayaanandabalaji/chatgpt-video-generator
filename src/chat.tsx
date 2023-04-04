@@ -1,7 +1,14 @@
+import { Composition } from 'remotion';
+import { useRef, useCallback } from 'react';
+import RecordRTC from 'recordrtc';
+import { useReactMediaRecorder } from 'react-media-recorder';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import say from 'say';
 import {MyVideo} from './video/MyVideo';
-import { Player } from "@remotion/player";
-import React, { useState, useRef } from "react";
+import { Player, PlayerRef } from "@remotion/player";
+import React, { useState } from "react";
 import {
   Avatar,
   Box,
@@ -20,7 +27,11 @@ interface Message {
   message: string;
   isBot?: boolean;
   blobUrl?: string;
-  sentence?: string;
+  audioUrl?: any;
+  duration?: any;
+  sentence?: any;
+  width?: number;
+  height?: number;
 }
 
 const useStyles = makeStyles((theme: { spacing: (arg0: number, arg1: number | undefined) => any; }) => ({
@@ -74,23 +85,30 @@ function ChatGPT() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer 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`,
+              Authorization: `Bearer OPENAI_API_KEY`,
             },
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
-                messages: [{"role": "user", "content": "summary of "+input+" in 3 lines"}]
-
+                messages: [{"role": "user", "content": "summary of "+input+" in 3 lines in a single paragraph seperated by dots"}]
             }),
           }
         );
         const data = await response.json();
         const message = data.choices[0].message.content.trim();
+        var totalDuration=0;
         const sentences = message.split(". ");
+        const audioSrc = [];
 
-                console.log("got sentence "+sentences[0]);
-
-                const audioSrc = await textToAudioSrc(sentences[0]);
-                       console.log(audioSrc);
+        for (let i = 0; i < sentences.length; i++) {
+          const sentence = sentences[i];
+          const response = await textToAudioSrc(sentence);
+          audioSrc.push(response);
+        
+      
+          totalDuration += (response as any)["duration"] + 1;
+        }
+        
+        
                       
         const videoResponse = await fetch("https://api.pexels.com/videos/search?query="+input+"&per_page=1&orientation=landscape", {
            headers: {
@@ -110,11 +128,19 @@ function ChatGPT() {
           }
         }
     //   await downloadVideo(Videodata.videos[0].video_files[highestWidthIndex].link);
+    console.log({
+      "sentences":sentences.toString(),
+      "urls":audioSrc.toString()
+    });
         setMessages([...messages, { message: input }, { 
             message,
              isBot: true,
              blobUrl:Videodata.videos[0].video_files[highestWidthIndex].link,
-             sentence:sentences[0]
+             audioUrl:audioSrc,
+             sentence:sentences,
+             width:960,
+             height:540,
+             duration:totalDuration
             }]);
         setInput("");
       } catch (error) {
@@ -128,28 +154,14 @@ function ChatGPT() {
     timeout?: number;
   }
   
-  const requestOptions: CustomRequestInit = {
-    timeout: 10000, // 10 seconds
-    // other options here
-  };
   
   const textToAudioSrc = async (text:string) => {
-    const textToAudioResponse = await fetch("http://localhost:3001/getaudio?text="+text, requestOptions);
-    const resString = await textToAudioResponse.text();
-    const response = await fetch(resString);
-    const videoBlob = await response.blob();
-    const blobUrl = URL.createObjectURL(videoBlob);
-    console.log(blobUrl);
+    const textToAudioResponse = await fetch("https://dandy-south-foxtail.glitch.me/getaudio?text="+text);
+    const resString = (await textToAudioResponse.json());
 
     return resString;
   };
   
-  
-  
-  
-
-  
-
   async function downloadVideo(url: string) {
     try {
         console.log("getting blob "+url);
@@ -161,15 +173,13 @@ function ChatGPT() {
       const blobUrl = URL.createObjectURL(videoBlob);
       console.log("getting blob 3"); 
       console.log(blobUrl);
-      setVideoBlobUrl(blobUrl);
+     // setVideoBlobUrl(blobUrl);
     } catch (error) {
       console.error(error);
     }
   }
 
-  const [videoBlobUrl, setVideoBlobUrl] = useState('');
 
-  
   const [loading, setLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -189,6 +199,55 @@ function ChatGPT() {
       setInput(value);
     }
   };
+  const [isRecording, setIsRecording] = useState(false);
+  const playerRef = useRef<PlayerRef>(null);
+  const wait = (milliseconds:number) => {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
+  };
+  const [showControls, setShowControls] = useState(true);
+
+  const handleRecordClick = async (duration:number) => {
+    try {
+     // await wait(1000); // Wait for 1 second
+
+      const stream = await (navigator.mediaDevices as any).getDisplayMedia({
+        video: {mediaSource: "screen"},
+        audio: true,
+      });
+  
+      const recorder = new RecordRTC(stream, {
+        type: 'video',
+        mimeType: 'video/webm',
+        timeSlice: 1000, // Record video in chunks of 1s
+        disableLogs: true
+      });
+
+      recorder.startRecording();
+      setShowControls(false);
+      playerRef.current?.requestFullscreen();
+      playerRef.current?.play();
+      setTimeout(() => {
+        setIsRecording(false);
+        recorder.stopRecording(() => {
+          playerRef.current?.exitFullscreen();
+          setShowControls(true);
+
+          const blob = recorder.getBlob();
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'recorded-video.webm';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+        });
+        stream.getTracks().forEach((track: { stop: () => any; }) => track.stop());
+      }, duration); 
+    } catch (error) {
+      console.error("Error starting screen recording:", error);
+    }
+  
+  }
 
   return (
     <Container maxWidth="md">
@@ -205,18 +264,50 @@ function ChatGPT() {
             <Box component={Paper} p={2}>
 
             {message.isBot ? (
-             <Player
-             component={MyVideo}
-             durationInFrames={150}
-             fps={30}
-             controls
-             compositionWidth={960}
-             compositionHeight={540}
-             inputProps={{
-               blobUrl: message.blobUrl!,
-               sentence:message.sentence!
-             }}
-           />
+            <div style={{ display: 'block', width: '100%', height: '100%' }}>
+                    
+
+<Player
+ref={playerRef}
+
+              component={MyVideo}
+              durationInFrames={parseInt((message.duration! * 30).toString(), 10)}
+              fps={30}
+              controls={showControls}
+              compositionWidth={message.width!}
+              compositionHeight={message.height!}
+              inputProps={{
+                blobUrl: message.blobUrl!,
+                sentence: message.sentence!,
+                audioUrl: message.audioUrl!,
+              }}
+            />     
+
+
+            <div style={{ textAlign: 'center', marginTop: '1rem' }} onClick={()=>{
+              handleRecordClick(parseInt((message.duration! * 1000).toString(), 10));
+            }}>
+              <a
+                download={`audio_${Date.now()}.mp3`}
+                style={{
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '5px',
+                  backgroundColor: '#f08a5d',
+                  textDecoration: 'none',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+
+                <FontAwesomeIcon icon={faDownload} style={{ marginRight: '0.5rem' }} />
+                Download Video
+              </a>
+            </div>
+          </div>
+          
+          
+
             ) : (
 <p>{message.message}</p>
             )}

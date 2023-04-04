@@ -6,6 +6,9 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.15",
     "@mui/styles": "^5.11.13",
@@ -23,7 +26,9 @@
     "node-fetch": "^3.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-media-recorder": "^1.6.6",
     "react-scripts": "5.0.1",
+    "recordrtc": "^5.6.2",
     "remotion": "^3.3.80",
     "say": "^0.16.0",
     "typescript": "^4.4.2",
@@ -56,6 +61,7 @@
     ]
   },
   "devDependencies": {
+    "@types/recordrtc": "^5.6.11",
     "concurrently": "^8.0.1",
     "esm": "^3.2.25"
   }
