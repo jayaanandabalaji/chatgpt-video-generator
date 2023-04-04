@@ -1,46 +1,68 @@
-# Getting Started with Create React App
+# ChatGPT Video Generator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The ChatGPT Video Generator is an AI-powered video generator that can generate videos with just a text as input. The generated video will have a simple animation of summary of the topic, with TTS (text to speech) using NodeJS to generate video. The video can also be downloaded. Currently, only a simple animation and can only be optimal for creating summary of a topic in a single or less words is available. We are working on towards adding more animation and making it usable for more purpose.
 
-## Available Scripts
+## Demo
 
-In the project directory, you can run:
+Check out the demo of the project at https://video-generator-8fe43.web.app/
 
-### `yarn start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- AI-powered video generation with just a text as input
+- Simple animation of summary of the topic
+- Text to Speech (TTS) using NodeJS to generate video
+- Ability to download generated video
+- Completely free for commercial use
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Getting Started
 
-### `yarn test`
+### Prerequisites
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Node.js
+- OpenAI API key
 
-### `yarn build`
+### Installation
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Create a `.env` file and add your OpenAI API key as `OPENAI_API_KEY`
+4. Start the development server with `npm run dev`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Enter a topic summary in the input field
+2. Click the "Send" button
+3. Wait for up to 30 seconds to 1 minute for the video to be generated
+4. Click the "Download video" button to download the generated video (Note: download option may be inefficient)
 
-### `yarn eject`
+## Remotion Command Line
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+If you want to create an HD video with more advanced features, you can use the [Remotion command line](https://www.remotion.dev/docs/render).
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Screenshots
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+<!-- Add screenshots here -->
+![Screenshot 1](https://lh3.googleusercontent.com/pw/AMWts8DeZeyulGD_rVjkjva5t3Ny2Y4SON66VZ0zLdn6UyFkfSVSuAhjPfNApnC3FVPJECCQJectXFn1jzQV1URkV16O8U6FQKT6uDbDlGILewx-TgJrmDg068YOARdrHZOjhU3tRF-y4CeSQeP1YnkAMibY=w1043-h619-s-no?authuser=0)  
+![Screenshot 2](https://lh3.googleusercontent.com/pw/AMWts8AyGsRhNClljfMOb9dt7nH7LhsoPmky2m_N_y7WVEOypZW7EN_67ccDT_Lnx_J4x115IQmientTooC-BalDCecEQJ9MQID2C6_6pz2A5SaZbmBztchOTyubmdBgYKn-TOOQYtWYf851MqSkLuUptF90=w993-h621-s-no?authuser=0)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Contributing
 
-## Learn More
+Contributions are welcome! If you have any feature requests or bug reports, please open an issue on Github. If you would like to contribute code, please fork the repository and submit a pull request.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+
+## Acknowledgements
+
+- OpenAI API
+- NodeJS
+- ReactJS
+- FFMPEG
+- Remotion
+
+## Hire me
+**Want to hire me on your upcoming or ongoing flutter project? 
+Contact me**
+
+<p><a href="https://www.linkedin.com/in/balaji-kannan-ab8580207/" target="_blank"><img alt="" src="https://cdn-icons-png.flaticon.com/512/174/174857.png" style="height:50px; width:50px" /></a>&nbsp; &nbsp; &nbsp;<a href="https://www.fiverr.com/balajikannan03" target="_blank"><img alt="" src="https://logos-world.net/wp-content/uploads/2020/12/Fiverr-Logo.png" style="height:50px; width:89px" /></a>&nbsp; &nbsp; &nbsp;<a href="http://wa.me/919444036945" target="_blank"><img alt="" src="https://cdn-icons-png.flaticon.com/512/124/124034.png" style="height:50px; width:50px" /></a></p>
